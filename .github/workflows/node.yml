@@ -1,0 +1,73 @@
+name: Build & Push Node.js to OCI Image Registry
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "node/**/**/Dockerfile"
+      - "node/entrypoint.sh"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "node/**/**/Dockerfile"
+      - "node/entrypoint.sh"
+
+jobs:
+  node-alpine:
+    name: Node.js ${{ matrix.version }} Alpine
+
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - 16
+          - 18
+
+    uses: ./.github/workflows/build.yml
+    with:
+      rootdir: node
+      workdir: node/${{ matrix.version }}/alpine
+      image-name: node
+    secrets:
+      github-username: ${{ github.repository_owner }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  node-debian:
+    name: Node.js ${{ matrix.version }} Debian
+
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - 16
+          - 18
+
+    uses: ./.github/workflows/build.yml
+    with:
+      rootdir: node
+      workdir: node/${{ matrix.version }}/debian
+      image-name: node
+    secrets:
+      github-username: ${{ github.repository_owner }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  node-puppeteer:
+    name: Node.js ${{ matrix.version }} Puppeteer
+
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - 16
+          - 18
+
+    uses: ./.github/workflows/build.yml
+    with:
+      rootdir: node
+      workdir: node/${{ matrix.version }}/puppeteer
+      image-name: node-puppeteer
+    secrets:
+      github-username: ${{ github.repository_owner }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
